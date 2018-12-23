@@ -1,4 +1,4 @@
-import {Action, Actions, ActionsTypes, createAction, State} from './actions';
+import {Action, Actions, ActionsTypes, createAction, State} from './example2';
 
 function reducer(state: State, action: Actions): typeof state {
   switch (action.type) {

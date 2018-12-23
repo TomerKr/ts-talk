@@ -154,32 +154,3 @@ interface DuckData {
 }
 
 let data: Unpack<DuckData>;
-
-
-enum FowlTypes {
-    duck,
-    goose
-}
-
-interface FowlData<T extends FowlTypes> {
-    type: T;
-    data: T extends FowlTypes.duck ? string :
-        T extends FowlTypes.goose ? number :
-        never;
-}
-
-type Action<T extends string = string> = {
-  type: T
-}
-
-export function isType<T extends string = string>(...types: T[]) {
-  return <A extends Action, U extends Extract<A, { type: T }>>(action: A): action is U =>
-    types.some(type => action.type === type);
-}
-
-
-
-let thing = {
-    data: 'thing'
-};
-
