@@ -1,4 +1,36 @@
 /**
+ * Big verbose code
+ */
+import {MyAction, MyPayload, MyState} from './pointless-interfaces';
+
+function uglyPick(obj: any, property: string): any { //Any in input, can put in whatever property. Null pointer exceptions everywhere!
+  return obj[property];
+}
+
+interface TypeWithNumbers {
+  a: number;
+  b: number;
+  c: string;
+  d: Date;
+}
+
+function addNumberPropsUgly(obj: any, p1: string, p2: string): number {
+  return obj[p1] + obj[p2]; //Are we sure these are numbers? We're losing all type safety here.
+}
+
+function uglyReducer(state: MyState, action: MyAction<any>): MyState { //'any' in input, what about safety for payload shapes?
+  switch (action.type) {
+    case 'mytype':
+      let payload: MyPayload = action.payload as MyPayload; //Why should I tell it when it's obvious?
+      return {...state, ...payload};
+    default:
+      return state;
+  }
+}
+
+
+
+/**
  * The basics
  */
 
@@ -89,8 +121,6 @@ type DeepPartial<T> = { //This is somewhat incomplete, acts kind of strangely wi
   [K in keyof T]?: DeepPartial<T[K]>
 }
 
-//TODO: Add init example. Google DeepPartial
-
 /**
  * Conditionals
  */
@@ -108,6 +138,10 @@ function doDuckThings(duck: Duck, thing: TypePropertyNames<Duck, () => any>) { /
 
 doDuckThings(duck, 'makeNoise');
 
+function addNumberProps(obj: TypeWithNumbers, p1: TypePropertyNames<TypeWithNumbers, number>, p2: TypePropertyNames<TypeWithNumbers, number>): number {
+  return obj[p1] + obj[p2];
+}
+
 
 /**
  * Infer
@@ -121,9 +155,6 @@ interface DuckData {
 
 let data: Unpack<DuckData>;
 
-/**
- * Combined usage
- */
 
 enum FowlTypes {
     duck,
