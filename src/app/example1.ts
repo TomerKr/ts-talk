@@ -2,13 +2,13 @@
 
 type DeepPartial<T> =
   T extends Array<infer U> ? DeepPartialArray<U> :
-    T extends object ? DeepPartialObject<T> :
-      T;
+  T extends object ? DeepPartialObject<T> :
+  T;
 
 type DeepPartialNoMethods<T> =
   T extends Array<infer U> ? DeepPartialArrayNoMethods<U> :
-    T extends object ? DeepPartialObjectNoMethods<T> :
-      T;
+  T extends object ? DeepPartialObjectNoMethods<T> :
+  T;
 
 interface DeepPartialArrayNoMethods<T> extends Array<DeepPartialNoMethods<T>> {}
 interface DeepPartialArray<T> extends Array<DeepPartial<T>> {}

@@ -99,7 +99,8 @@ function tryToFly(bird: BirdUnion): boolean {
   if (bird.canFly) {
     bird.fly(); //TS knows this is a duck, and not a penguin.
     return true;
-  } else {
+  } else { //Only works in strict mode.
+    bird.eatFish();
     return false;
   }
 }
@@ -115,7 +116,11 @@ function pick<T, K extends keyof T>(obj: T, property: K): T[K] {
 
 let duckLooks = pick(duck, 'looks');
 
-type PartDuck = Partial<Duck>; //Defintion of Partial uses that as well.
+
+type PartDuck = Partial<Duck>;
+type myPartial<T> = {
+  [K in keyof T]?: T
+}
 
 type DeepPartial<T> = { //This is somewhat incomplete, acts kind of strangely with arrays. Later tools allow us to make it better.
   [K in keyof T]?: DeepPartial<T[K]>
@@ -124,15 +129,29 @@ type DeepPartial<T> = { //This is somewhat incomplete, acts kind of strangely wi
 /**
  * Conditionals
  */
-type Diff<T, U> = T extends U ? never: T; //Exclude is sort of defined like this
+type Diff<T, U> = T extends U ? never : T; //Exclude is sort of defined like this
+
+type BoolPropertyNames<T> = {
+  [K in keyof T]: T[K] extends boolean ? K : never
+}[keyof T];
+
+/**
+ * {
+ *     canSwim: 'canSwim'
+ *     canFly: 'canFly'
+ *     looks: never
+ *     fly: never
+ * }
+ */
+
+let t: BoolPropertyNames<Duck>;
+
 
 type TypePropertyNames<T, P> = {
   [K in keyof T]: T[K] extends P ? K : never
 }[keyof T];
 
-let t: TypePropertyNames<Duck, boolean>;
-
-function doDuckThings(duck: Duck, thing: TypePropertyNames<Duck, () => any>) { //This one unfortunately does not work with generic. Unsure why.
+function doDuckThings(duck: Duck, thing: TypePropertyNames<Duck, () => any>) {
   duck[thing]();
 }
 
@@ -154,3 +173,9 @@ interface DuckData {
 }
 
 let data: Unpack<DuckData>;
+
+type Unpacked<T> = //Example taken from docs.
+  T extends (infer U)[] ? U :
+  T extends (...args: any[]) => infer U ? U :
+  T extends Promise<infer U> ? U :
+  T;
